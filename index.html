@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modular Audio Visualizer</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --danger: #f43f5e;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .container { width: 100%; max-width: 800px; background: var(--panel); padding: 28px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); display: flex; flex-direction: column; gap: 20px; }
+    header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; }
+    h1 { font-size: 1.5rem; color: var(--accent); margin-bottom: 4px; }
+    p.sub { color: var(--muted); font-size: 0.875rem; }
+    .config-group { display: flex; flex-direction: column; gap: 8px; }
+    label { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    input[type="password"] { background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text); padding: 12px 16px; border-radius: 8px; outline: none; font-size: 0.95rem; }
+    input[type="password"]:focus { border-color: var(--accent); }
+    .controls { display: flex; gap: 12px; }
+    button { flex: 1; padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
+    button:active { transform: scale(0.98); }
+    #startBtn { background: var(--accent); color: #000; }
+    #stopBtn { background: var(--danger); color: var(--text); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .status-bar { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--muted); }
+    .indicator { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+    .indicator.active { background: var(--success); box-shadow: 0 0 10px var(--success); }
+    
+    /* Layer 5 Visualizer Viewport */
+    .visualizer-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 20px; height: 160px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; }
+    
+    .output-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 16px; height: 140px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; display: flex; flex-direction: column; gap: 6px; }
+    .log-item { padding-bottom: 4px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    .log-item .timestamp { color: var(--accent); font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Live Modular Audio Visualizer</h1>
+      <p class="sub">Layers 1-5: Ingestion &rarr; Translation &rarr; DSP &rarr; Assignment &rarr; UI Rendering</p>
+    </header>
+    <div class="config-group">
+      <label for="apiKey">Groq API Key</label>
+      <input type="password" id="apiKey" placeholder="gsk_..." />
+    </div>
+    <div class="controls">
+      <button id="startBtn">Start Live Stream</button>
+      <button id="stopBtn" disabled>Stop</button>
+    </div>
+    <div class="status-bar">
+      <div id="statusDot" class="indicator"></div>
+      <span id="statusText">Status: Idle</span>
+    </div>
+
+    <!-- Layer 5 Visualizer Output Stream -->
+    <div class="config-group">
+      <label>Layer 5 Visualizer Stream</label>
+      <div id="visualizerContainer" class="visualizer-box">
+        <span style="color: var(--muted); font-style: italic; font-size: 0.9rem;">Spoken words will render here reactively...</span>
+      </div>
+    </div>
+
+    <div class="config-group">
+      <label>Pipeline Console Logs</label>
+      <div id="logOutput" class="output-box">
+        <div class="log-item" style="color: var(--muted);">Pipeline ready. Enter API key to begin.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import main entry pipeline script -->
+  <script type="module" src="pipeline.js"></script>
+</body>
+</html>
